@@ -135,3 +135,4 @@ pomExtra := <url>https://github.com/audienceproject/spark-dynamodb</url>
             <organizationUrl>https://www.audienceproject.com</organizationUrl>
         </developer>
     </developers>
+assembly / test := {}
