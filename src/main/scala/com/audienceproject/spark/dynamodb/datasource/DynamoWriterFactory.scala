@@ -43,12 +43,15 @@ class DynamoWriterFactory(connector: TableConnector,
 
     override def createDataWriter(partitionId: Int, taskId: Long, epochId: Long): DataWriter[InternalRow] = {
         val columnSchema = new ColumnSchema(connector.keySchema, schema)
-        val client = connector.getDynamoDB(region, roleArn, providerClassName, endpoint, accessKey, secretKey)
+        val client = connector.getDynamoDB(region, roleArn, providerClassName, endpoint)
+
         if (update) {
             assert(!delete, "Please provide exactly one of 'update' or 'delete' options.")
             new DynamoUpdateWriter(columnSchema, connector, client)
         } else if (delete) {
             new DynamoBatchDeleteWriter(batchSize, columnSchema, connector, client)
+        } else if (columnSchema.opType.isDefined) {
+            new DynamoMixedBatchWriter(batchSize, columnSchema, columnSchema.opType.get, connector, client)
         } else {
             new DynamoBatchWriter(batchSize, columnSchema, connector, client)
         }
