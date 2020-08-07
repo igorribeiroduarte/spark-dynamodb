@@ -39,9 +39,7 @@ class ScanPartition(schema: StructType,
     private val requiredColumns = schema.map(_.name)
 
     @transient
-    private lazy val typeConversions = schema.collect({
-        case StructField(name, dataType, _, _) => name -> TypeConversion(name, dataType)
-    }).toMap
+    private lazy val typeConverter = TypeConverter.fromStructType(schema)
 
     override def createPartitionReader(): InputPartitionReader[InternalRow] = {
         if (connector.isEmpty) new EmptyReader
@@ -91,13 +89,13 @@ class ScanPartition(schema: StructType,
             val page = pageIterator.next()
             val result = page.getLowLevelResult
             Option(result.getScanResult.getConsumedCapacity).foreach(cap => rateLimiter.acquire(cap.getCapacityUnits.toInt max 1))
-            innerIterator = result.getItems.iterator().asScala.map(itemToRow(requiredColumns))
+            innerIterator = result.getItems.iterator().asScala.map(itemToRow)
         }
 
     }
 
-    private def itemToRow(requiredColumns: Seq[String])(item: Item): InternalRow =
-        if (requiredColumns.nonEmpty) InternalRow.fromSeq(requiredColumns.map(columnName => typeConversions(columnName)(item)))
+    private def itemToRow(item: Item): InternalRow =
+        if (schema.nonEmpty) typeConverter.readInternalRow(item)
         else InternalRow.fromSeq(item.asMap().asScala.values.toSeq.map(_.toString))
 
 }
