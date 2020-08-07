@@ -14,8 +14,8 @@ compileOrder := CompileOrder.JavaThenScala
 
 resolvers += "DynamoDBLocal" at "https://s3-us-west-2.amazonaws.com/dynamodb-local/release"
 
-libraryDependencies += "com.amazonaws" % "aws-java-sdk-sts" % "1.11.678"
-libraryDependencies += "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.11.678"
+libraryDependencies += "com.amazonaws" % "aws-java-sdk-sts" % "1.11.728" % "provided"
+libraryDependencies += "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.11.728" % "provided"
 libraryDependencies += "com.amazonaws" % "DynamoDBLocal" % "[1.11,2.0)" % "test" exclude("com.google.guava", "guava")
 
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.4" % "provided"
