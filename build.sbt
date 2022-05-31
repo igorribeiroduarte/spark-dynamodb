@@ -8,7 +8,7 @@ description := "Plug-and-play implementation of an Apache Spark custom data sour
 
 scalaVersion := "2.11.12"
 
-crossScalaVersions := Seq("2.11.12", "2.12.7")
+crossScalaVersions := Seq("2.11.12", "2.12.11")
 
 compileOrder := CompileOrder.JavaThenScala
 
